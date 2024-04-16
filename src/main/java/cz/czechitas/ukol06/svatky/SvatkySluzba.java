@@ -19,9 +19,15 @@ public class SvatkySluzba {
     private final Path cestaKDatum = Path.of("data/svatky.json");
     private final SeznamSvatku seznamSvatku;
 
-    public SvatkySluzba() throws IOException {
-        String json = Files.readString(cestaKDatum);
-        seznamSvatku = objectMapper.readValue(json, SeznamSvatku.class);
+    public SvatkySluzba() {
+        SeznamSvatku tempSeznamSvatku = null;
+        try {
+            String json = Files.readString(cestaKDatum);
+            tempSeznamSvatku = objectMapper.readValue(json, SeznamSvatku.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        seznamSvatku = tempSeznamSvatku;
     }
 
     public List<String> vyhledatSvatkyDnes() {
@@ -31,7 +37,6 @@ public class SvatkySluzba {
     public List<String> vyhledatSvatkyKeDni(MonthDay day) {
         return seznamSvatku.getSvatky().stream()
                 .filter(svatek -> svatek.getDen().equals(day))
-                .map(Svatek::getJmeno)
-                .collect(Collectors.toList());
+                .map(Svatek::getJmeno).toList();
     }
 }
